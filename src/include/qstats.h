@@ -1,6 +1,17 @@
 /*
+ ****************************************************************************
+ * qstats.h
+ *      query reports definitions.
+ *
+ * (C) 2016 by Alexey V. Lesovsky (lesovsky <at> gmail.com)
+ * 
+ ****************************************************************************
+ */
+/*
  * based on https://github.com/PostgreSQL-Consulting/pg-utils/blob/master/sql/global_reports/query_stat_total.sql
  */
+#ifndef __QSTATS_H__
+#define __QSTATS_H__
 
 #define PG_GET_QUERYREP_BY_QUERYID_QUERY_P1 \
     "WITH pg_stat_statements_normalized AS ( \
@@ -36,7 +47,7 @@
             sum(blk_read_time) AS blk_read_time, sum(blk_write_time) AS blk_write_time, \
             sum(calls) AS calls, sum(rows) AS rows \
         FROM pg_stat_statements_normalized p \
-        JOIN pg_authid a ON a.oid=p.userid \
+        JOIN pg_roles a ON a.oid=p.userid \
         JOIN pg_database d ON d.oid=p.dbid \
         WHERE TRUE AND left(md5(d.datname || a.rolname || p.query ), 10) = '"
 
@@ -112,3 +123,5 @@ enum qstats_attr {
     REP_USER                    = 22,
     REP_QUERY                   = 23
 };  /* qstats_attr */
+
+#endif /* __QSTATS_H__ */
